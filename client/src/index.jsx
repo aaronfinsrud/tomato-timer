@@ -1,10 +1,15 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import Timer from './components/Timer.jsx';
+import utils from '../../utils';
 
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      sessionLength: utils.minsToMs(0.25),
+      breakLength: utils.minsToMs(5),
+    };
   }
 
   componentDidMount() {
@@ -12,9 +17,14 @@ class App extends React.Component {
   }
 
   render() {
+    const { sessionLength, breakLength } = this.state;
     return (
       <div>
-        Tomato clock
+        <h1>Tomato clock</h1>
+        <Timer
+          sessionLength={sessionLength}
+          breakLength={breakLength}
+        />
       </div>
     );
   }
