@@ -1,7 +1,10 @@
 const express = require('express');
 const axios = require('axios');
 const morgan = require('morgan');
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
 const path = require('path');
+const db = require('../db');
 
 const app = express();
 const config = require('../config');
@@ -9,6 +12,38 @@ const config = require('../config');
 app.use(express.static(path.join(__dirname, '/../client/dist')));
 app.use(express.json());
 app.use(morgan('dev'));
+
+app.use(cookieParser());
+app.use(session({
+  secret: config.sessionSecret,
+  resave: false,
+  saveUninitialized: true,
+}));
+
+app.get('/db/settings', (req, res) => {
+  const { sessionID } = req;
+  console.log(sessionID);
+  db.retrieveSettings(sessionID)
+    .then((response) => {
+      res.status(201).json(response);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
+app.post('/db/settings', (req, res) => {
+  const { sessionID } = req;
+  const settings = req.body;
+  db.updateOrAddSettings(sessionID, settings)
+    .then((response) => {
+      console.log('post response: ', response);
+      res.status(201).json(response);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
 
 app.get('/api/xkcd/:comicNumber', (req, res) => {
   const { comicNumber } = req.params;
