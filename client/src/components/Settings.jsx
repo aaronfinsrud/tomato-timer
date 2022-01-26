@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import utils from '../../../utils';
+import enums from '../../../enums';
 
 class Settings extends React.Component {
   constructor(props) {
@@ -43,7 +44,8 @@ class Settings extends React.Component {
           max="60"
           onChange={this.handleInputChange}
           value={updatedSessionLength}
-        />&nbsp;mins
+        />
+&nbsp;mins
         <br />
         <label htmlFor="break-length">
           Break length&nbsp;
@@ -55,7 +57,8 @@ class Settings extends React.Component {
           max="60"
           onChange={this.handleInputChange}
           value={updatedBreakLength}
-        />&nbsp;mins
+        />
+&nbsp;mins
         <br />
 
         <label htmlFor="reward">
@@ -65,8 +68,16 @@ class Settings extends React.Component {
           id="reward"
           onChange={this.handleInputChange}
         >
-          <option selected={rewardType === 'cartoon'} value="cartoon">cartoon</option>
-          <option selected={rewardType === 'joke'} value="joke">joke</option>
+          {
+            enums.rewards.map((reward) => (
+              <option
+                selected={rewardType === reward.toLowerCase()}
+                value={reward.toLowerCase()}
+              >
+                {reward}
+              </option>
+            ))
+          }
         </select>
 
         <br />
