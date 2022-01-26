@@ -7,7 +7,9 @@
   "dependencies": {
     "axios": "^0.25.0",
     "babel-loader": "^8.2.3",
+    "cookie-parser": "^1.4.6",
     "express": "^4.17.2",
+    "express-session": "^1.17.2",
     "html-webpack-plugin": "^5.5.0",
     "mongoose": "^6.1.8",
     "morgan": "^1.10.0",
