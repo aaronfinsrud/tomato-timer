@@ -3,6 +3,7 @@ import ReactDom from 'react-dom';
 import './App.css';
 import Timer from './components/Timer.jsx';
 import Modal from './components/Modal.jsx';
+import Settings from './components/Settings.jsx';
 import utils from '../../utils';
 
 class App extends React.Component {
@@ -12,12 +13,17 @@ class App extends React.Component {
       sessionLength: utils.minsToMs(0.25),
       breakLength: utils.minsToMs(5),
       settingsModalIsShowing: false,
+      timeRemaining: 0,
     };
     this.toggleSettingsModal = this.toggleSettingsModal.bind(this);
+    this.handleSettingsUpdate = this.handleSettingsUpdate.bind(this);
   }
 
-  componentDidMount() {
-
+  handleSettingsUpdate(sessionLength, breakLength) {
+    // update state & close modal
+    this.setState({ sessionLength, breakLength, settingsModalIsShowing: false });
+    // update timeRemaining
+    // send settings to database matched w/ sessionId
   }
 
   toggleSettingsModal() {
@@ -40,7 +46,11 @@ class App extends React.Component {
           onClose={this.toggleSettingsModal}
           title="Settings"
         >
-          this is a test
+          <Settings
+            sessionLength={sessionLength}
+            breakLength={breakLength}
+            handleSettingsUpdate={this.handleSettingsUpdate}
+          />
         </Modal>
       </div>
     );
