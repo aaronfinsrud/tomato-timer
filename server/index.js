@@ -16,7 +16,7 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(session({
   secret: config.sessionSecret,
-  resave: false,
+  resave: true,
   secure: false,
   saveUninitialized: true,
 }));
