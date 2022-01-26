@@ -1,29 +1,35 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import axios from 'axios';
 import './App.css';
 import Timer from './components/Timer.jsx';
 import Modal from './components/Modal.jsx';
 import Settings from './components/Settings.jsx';
 import utils from '../../utils';
 
+const DEFAULT_MIN = Math.ceil(utils.minsToMs(0.1));
+
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sessionLength: utils.minsToMs(0.25),
-      breakLength: utils.minsToMs(5),
+      sessionLength: DEFAULT_MIN,
+      breakLength: DEFAULT_MIN,
       settingsModalIsShowing: false,
-      timeRemaining: utils.minsToMs(0.25),
+      rewardModalIsShowing: false,
+      timeRemaining: DEFAULT_MIN,
       inBreak: false,
       intervalId: 0,
       isStopped: true,
       rewardType: 'cartoon',
+      reward: '',
     };
     this.toggleSettingsModal = this.toggleSettingsModal.bind(this);
     this.handleSettingsUpdate = this.handleSettingsUpdate.bind(this);
     this.toggleStopped = this.toggleStopped.bind(this);
     this.updateTimeRemaining = this.updateTimeRemaining.bind(this);
     this.toggleInBreak = this.toggleInBreak.bind(this);
+    this.toggleRewardModal = this.toggleRewardModal.bind(this);
   }
 
   handleSettingsUpdate(sessionLength, breakLength, rewardType) {
@@ -41,22 +47,33 @@ class App extends React.Component {
     this.setState({ settingsModalIsShowing: !settingsModalIsShowing });
   }
 
+  toggleRewardModal() {
+    const { rewardModalIsShowing } = this.state;
+    this.setState({ rewardModalIsShowing: !rewardModalIsShowing });
+  }
+
   toggleInBreak() {
-    const { inBreak } = this.state;
-    const { sessionLength, breakLength } = this.state;
+    const { inBreak, sessionLength, breakLength } = this.state;
     const timeRemaining = inBreak ? sessionLength : breakLength;
     this.setState({ inBreak: !inBreak, timeRemaining });
-    this.toggleStopped();
   }
 
   updateTimeRemaining() {
-    const { timeRemaining, intervalId, rewardType } = this.state;
-    if (timeRemaining <= 0) {
-      this.toggleInBreak();
-      clearInterval(intervalId);
-      // TODO: show modal with joke/cartoon
+    const { timeRemaining, rewardType } = this.state;
+    if (timeRemaining >= 1) {
+      console.log(timeRemaining);
+      this.setState({ timeRemaining: (timeRemaining - utils.secsToMS(1)) });
     } else {
-      this.setState({ timeRemaining: timeRemaining - utils.secsToMS(1) });
+      this.toggleInBreak();
+      this.toggleStopped();
+
+      // TODO: show modal with joke/cartoon
+      const comicNumber = Math.floor(Math.random() * 2572);
+      const url = rewardType === 'cartoon' ? `/api/xkcd/${comicNumber}` : '';
+      axios.get(url)
+        .then((response) => {
+          this.setState({ rewardModalIsShowing: true, reward: response.data });
+        });
     }
   }
 
@@ -74,8 +91,8 @@ class App extends React.Component {
 
   render() {
     const {
-      sessionLength, breakLength, settingsModalIsShowing,
-      inBreak, timeRemaining, isStopped, rewardType,
+      sessionLength, breakLength, settingsModalIsShowing, rewardModalIsShowing,
+      inBreak, timeRemaining, isStopped, rewardType, reward,
     } = this.state;
     return (
       <div>
@@ -89,6 +106,19 @@ class App extends React.Component {
           toggleStopped={this.toggleStopped}
         />
         <button disabled={!isStopped} type="button" onClick={this.toggleSettingsModal}>settings</button>
+
+        {/* REWARD MODAL */}
+        <Modal
+          isShowing={rewardModalIsShowing}
+          onClose={this.toggleRewardModal}
+          title="Cartoon"
+        >
+          <div style={{ display: 'flex', justifyConent: 'center' }}>
+            <img alt={reward.alt} src={reward.img} />
+          </div>
+        </Modal>
+
+        {/* SETTINGS MODAL */}
         <Modal
           isShowing={settingsModalIsShowing}
           onClose={this.toggleSettingsModal}
