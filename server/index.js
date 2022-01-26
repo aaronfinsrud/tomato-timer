@@ -32,6 +32,17 @@ app.get('/api/catapi', (req, res) => {
     });
 });
 
+app.get('/api/dogapi', (req, res) => {
+  axios.get('https://dog.ceo/api/breeds/image/random')
+    .then((response) => {
+      console.log(response);
+      res.status(200).json(response.data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
 app.listen(config.port, () => {
   console.log(`listening on port ${config.port}`);
 });

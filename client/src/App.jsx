@@ -38,22 +38,35 @@ class App extends React.Component {
     this.updateRewardContent();
   }
 
-  handleSettingsUpdate(sessionLength, breakLength, rewardType) {
+  handleSettingsUpdate(updatedSessionLength, updatedBreakLength, updatedRewardType) {
     // update state & close modal
-    const { inBreak } = this.state;
-    const timeRemaining = inBreak ? breakLength : sessionLength;
+    const { inBreak, rewardType } = this.state;
+    const timeRemaining = inBreak ? updatedBreakLength : updatedSessionLength;
     this.setState({
-      sessionLength, breakLength, timeRemaining, rewardType, settingsModalIsShowing: false,
+      sessionLength: updatedSessionLength,
+      breakLength: updatedBreakLength,
+      timeRemaining,
+      rewardType: updatedRewardType,
+      settingsModalIsShowing: false,
     });
+    if (rewardType !== updatedRewardType) this.updateRewardContent();
     // TODO: send settings to database matched w/ sessionId
   }
 
   updateRewardContent() {
     let { rewardType } = this.state;
-    // TODO: handle random, jokes, & cats rewardType
+    // TODO: handle jokes & dog rewardType
     if (rewardType === 'random') {
       const possibleRewards = enums.rewards.length;
       rewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
+    }
+    if (rewardType === 'dog photos') {
+      const url = '/api/dogapi';
+      axios.get(url)
+        .then((response) => {
+          const rewardContent = { img: response.data.message };
+          this.setState({ rewardContent });
+        });
     }
 
     if (rewardType === 'cat photos') {
@@ -140,8 +153,9 @@ class App extends React.Component {
         >
           <div style={{ display: 'flex', justifyConent: 'center' }}>
             <img
-              style={{maxWidth: '100%'}}
+              style={{ maxWidth: '100%' }}
               src={rewardContent.img}
+              alt=""
             />
           </div>
         </Modal>
