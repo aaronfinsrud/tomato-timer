@@ -167,6 +167,10 @@ body {
 .modal-component-body {
   padding: 10px 20px;
   background: #fff;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
 }
 
 .modal-component-footer {

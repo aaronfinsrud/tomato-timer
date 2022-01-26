@@ -1,4 +1,5 @@
 const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 const SRC_DIR = path.join(__dirname, '/client/src');
 const DIST_DIR = path.join(__dirname, '/client/dist');
@@ -9,6 +10,13 @@ module.exports = {
     filename: 'bundle.js',
     path: DIST_DIR,
   },
+  plugins: [
+    new HtmlWebpackPlugin({
+      favicon: './client/src/favicon.ico',
+      template: './client/src/template.html',
+      inject: 'body',
+    }),
+  ],
   module: {
     rules: [
       {

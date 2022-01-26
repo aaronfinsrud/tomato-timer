@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import utils from '../../../utils';
+import enums from '../../../enums';
 
 class Settings extends React.Component {
   constructor(props) {
@@ -11,6 +12,7 @@ class Settings extends React.Component {
       updatedRewardType: '',
     };
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidMount() {
@@ -28,9 +30,20 @@ class Settings extends React.Component {
     if (id === 'reward') this.setState({ updatedRewardType: value });
   }
 
-  render() {
+  handleSubmit(e) {
+    e.preventDefault();
     const { updatedBreakLength, updatedSessionLength, updatedRewardType } = this.state;
     const { rewardType, handleSettingsUpdate } = this.props;
+    handleSettingsUpdate(
+      utils.minsToMs(updatedSessionLength),
+      utils.minsToMs(updatedBreakLength),
+      updatedRewardType || rewardType,
+    );
+  }
+
+  render() {
+    const { updatedBreakLength, updatedSessionLength } = this.state;
+    const { rewardType } = this.props;
     return (
       <div id="settings-container">
         <label htmlFor="session-length">
@@ -43,7 +56,8 @@ class Settings extends React.Component {
           max="60"
           onChange={this.handleInputChange}
           value={updatedSessionLength}
-        />&nbsp;mins
+        />
+&nbsp;mins
         <br />
         <label htmlFor="break-length">
           Break length&nbsp;
@@ -55,7 +69,8 @@ class Settings extends React.Component {
           max="60"
           onChange={this.handleInputChange}
           value={updatedBreakLength}
-        />&nbsp;mins
+        />
+&nbsp;mins
         <br />
 
         <label htmlFor="reward">
@@ -64,19 +79,24 @@ class Settings extends React.Component {
         <select
           id="reward"
           onChange={this.handleInputChange}
+          defaultValue={rewardType.toLowerCase()}
         >
-          <option selected={rewardType === 'cartoon'} value="cartoon">cartoon</option>
-          <option selected={rewardType === 'joke'} value="joke">joke</option>
+          {
+            enums.rewards.map((reward, idx) => (
+              <option
+                key={`reward-${reward}`}
+                value={reward.toLowerCase()}
+              >
+                {reward}
+              </option>
+            ))
+          }
         </select>
 
         <br />
 
         <input
-          onClick={() => handleSettingsUpdate(
-            utils.minsToMs(updatedSessionLength),
-            utils.minsToMs(updatedBreakLength),
-            updatedRewardType || rewardType,
-          )}
+          onClick={this.handleSubmit}
           type="submit"
           value="Save"
         />
@@ -89,6 +109,7 @@ Settings.propTypes = {
   sessionLength: PropTypes.number.isRequired,
   breakLength: PropTypes.number.isRequired,
   handleSettingsUpdate: PropTypes.func.isRequired,
+  rewardType: PropTypes.string,
 };
 
 export default Settings;

@@ -1,39 +1,119 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import axios from 'axios';
 import './App.css';
 import Timer from './components/Timer.jsx';
 import Modal from './components/Modal.jsx';
 import Settings from './components/Settings.jsx';
 import utils from '../../utils';
+import enums from '../../enums';
+
+const DEFAULT_BREAK = Math.ceil(utils.minsToMs(2));
+const DEFAULT_SESSION = Math.ceil(utils.minsToMs(25));
+const DEFAULT_REWARD = enums.rewards[0].toLowerCase();
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sessionLength: utils.minsToMs(0.25),
-      breakLength: utils.minsToMs(5),
+      sessionLength: DEFAULT_SESSION,
+      breakLength: DEFAULT_BREAK,
       settingsModalIsShowing: false,
-      timeRemaining: utils.minsToMs(0.25),
+      rewardModalIsShowing: false,
+      timeRemaining: DEFAULT_SESSION,
       inBreak: false,
       intervalId: 0,
       isStopped: true,
-      rewardType: 'cartoon',
+      rewardType: DEFAULT_REWARD,
+      rewardContent: '',
     };
     this.toggleSettingsModal = this.toggleSettingsModal.bind(this);
     this.handleSettingsUpdate = this.handleSettingsUpdate.bind(this);
     this.toggleStopped = this.toggleStopped.bind(this);
     this.updateTimeRemaining = this.updateTimeRemaining.bind(this);
     this.toggleInBreak = this.toggleInBreak.bind(this);
+    this.toggleRewardModal = this.toggleRewardModal.bind(this);
+    this.updateRewardContent = this.updateRewardContent.bind(this);
   }
 
-  handleSettingsUpdate(sessionLength, breakLength, rewardType) {
+  componentDidMount() {
+    this.updateRewardContent();
+    axios.get('/db/settings')
+      .then((response) => {
+        const { breakLength, sessionLength, rewardType } = response.data;
+        this.setState({
+          breakLength: breakLength || DEFAULT_BREAK,
+          sessionLength: sessionLength || DEFAULT_SESSION,
+          rewardType: rewardType || DEFAULT_REWARD,
+          timeRemaining: sessionLength || DEFAULT_SESSION,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }
+
+  handleSettingsUpdate(updatedSessionLength, updatedBreakLength, updatedRewardType) {
     // update state & close modal
-    const { inBreak } = this.state;
-    const timeRemaining = inBreak ? breakLength : sessionLength;
+    const { inBreak, rewardType } = this.state;
+    const timeRemaining = inBreak ? updatedBreakLength : updatedSessionLength;
     this.setState({
-      sessionLength, breakLength, timeRemaining, rewardType, settingsModalIsShowing: false,
+      sessionLength: updatedSessionLength,
+      breakLength: updatedBreakLength,
+      timeRemaining,
+      rewardType: updatedRewardType,
+      settingsModalIsShowing: false,
     });
-    // send settings to database matched w/ sessionId
+    if (rewardType !== updatedRewardType) this.updateRewardContent(updatedRewardType);
+    // TODO: send settings to database matched w/ sessionId
+    const payload = {
+      breakLength: updatedBreakLength,
+      sessionLength: updatedSessionLength,
+      rewardType: updatedRewardType,
+    };
+    axios.post('/db/settings', payload);
+  }
+
+  updateRewardContent(updatedRewardType) {
+    // keep random first
+    if (updatedRewardType === 'random') {
+      const possibleRewards = enums.rewards.length;
+      updatedRewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
+    }
+    if (updatedRewardType === 'dog photos') {
+      const url = '/api/dogapi';
+      axios.get(url)
+        .then((response) => {
+          const rewardContent = { img: response.data.message };
+          this.setState({ rewardContent });
+        });
+    }
+
+    if (updatedRewardType === 'cat photos') {
+      const url = '/api/catapi';
+      axios.get(url)
+        .then((response) => {
+          const rewardContent = { img: response.data[0].url };
+          this.setState({ rewardContent });
+        });
+    }
+    if (updatedRewardType === 'xkcd comic') {
+      const comicNumber = Math.floor(Math.random() * 2572);
+      const url = `/api/xkcd/${comicNumber}`;
+      axios.get(url)
+        .then((response) => {
+          this.setState({ rewardContent: response.data });
+        });
+    }
+    if (updatedRewardType === 'programming memes') {
+      const url = '/api/programming-memes';
+      axios.get(url)
+        .then((response) => {
+          const idx = Math.floor(Math.random() * response.data.length);
+          const rewardContent = { img: response.data[idx].image };
+          this.setState({ rewardContent });
+        });
+    }
   }
 
   toggleSettingsModal() {
@@ -41,22 +121,26 @@ class App extends React.Component {
     this.setState({ settingsModalIsShowing: !settingsModalIsShowing });
   }
 
+  toggleRewardModal() {
+    const { rewardModalIsShowing } = this.state;
+    this.setState({ rewardModalIsShowing: !rewardModalIsShowing });
+    this.updateRewardContent();
+  }
+
   toggleInBreak() {
-    const { inBreak } = this.state;
-    const { sessionLength, breakLength } = this.state;
+    const { inBreak, sessionLength, breakLength } = this.state;
     const timeRemaining = inBreak ? sessionLength : breakLength;
     this.setState({ inBreak: !inBreak, timeRemaining });
-    this.toggleStopped();
   }
 
   updateTimeRemaining() {
-    const { timeRemaining, intervalId, rewardType } = this.state;
-    if (timeRemaining <= 0) {
-      this.toggleInBreak();
-      clearInterval(intervalId);
-      // TODO: show modal with joke/cartoon
+    const { timeRemaining } = this.state;
+    if (timeRemaining >= 1) {
+      this.setState({ timeRemaining: (timeRemaining - utils.secsToMS(1)) });
     } else {
-      this.setState({ timeRemaining: timeRemaining - utils.secsToMS(1) });
+      this.toggleInBreak();
+      this.toggleStopped();
+      this.setState({ rewardModalIsShowing: true });
     }
   }
 
@@ -74,8 +158,8 @@ class App extends React.Component {
 
   render() {
     const {
-      sessionLength, breakLength, settingsModalIsShowing,
-      inBreak, timeRemaining, isStopped, rewardType,
+      sessionLength, breakLength, settingsModalIsShowing, rewardModalIsShowing,
+      inBreak, timeRemaining, isStopped, rewardType, rewardContent,
     } = this.state;
     return (
       <div>
@@ -89,6 +173,23 @@ class App extends React.Component {
           toggleStopped={this.toggleStopped}
         />
         <button disabled={!isStopped} type="button" onClick={this.toggleSettingsModal}>settings</button>
+
+        {/* REWARD MODAL */}
+        <Modal
+          isShowing={rewardModalIsShowing}
+          onClose={this.toggleRewardModal}
+          title={rewardType}
+        >
+          <div style={{ display: 'flex', justifyConent: 'center' }}>
+            <img
+              style={{ maxWidth: '100%' }}
+              src={rewardContent.img}
+              alt=""
+            />
+          </div>
+        </Modal>
+
+        {/* SETTINGS MODAL */}
         <Modal
           isShowing={settingsModalIsShowing}
           onClose={this.toggleSettingsModal}
