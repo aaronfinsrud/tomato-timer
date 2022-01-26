@@ -67,12 +67,12 @@ class Settings extends React.Component {
         <select
           id="reward"
           onChange={this.handleInputChange}
+          defaultValue={rewardType.toLowerCase()}
         >
           {
             enums.rewards.map((reward, idx) => (
               <option
-                key={`reward-${idx}`}
-                selected={rewardType === reward.toLowerCase()}
+                key={`reward-${reward}`}
                 value={reward.toLowerCase()}
               >
                 {reward}
