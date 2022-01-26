@@ -163,7 +163,10 @@ class App extends React.Component {
     } = this.state;
     return (
       <div>
-        <h1>Tomato clock</h1>
+        <div id="nav-bar">
+          <h1>Tomato clock</h1>
+          <button disabled={!isStopped} type="button" onClick={this.toggleSettingsModal}>settings</button>
+        </div>
         <Timer
           sessionLength={sessionLength}
           breakLength={breakLength}
@@ -172,8 +175,6 @@ class App extends React.Component {
           timeRemaining={timeRemaining}
           toggleStopped={this.toggleStopped}
         />
-        <button disabled={!isStopped} type="button" onClick={this.toggleSettingsModal}>settings</button>
-
         {/* REWARD MODAL */}
         <Modal
           isShowing={rewardModalIsShowing}

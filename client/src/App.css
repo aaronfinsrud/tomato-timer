@@ -1,13 +1,37 @@
 :root {
   --tomato: rgba(255, 0, 0, 0.514)0000;
   --leaves: rgb(0, 128, 0);
+	--modal-color: #5f6270d0;
 }
 
 body {
-  background-color: #1e212d;
-  color: #eabf9f;
+  background-color: #1e212d48;
+  color: #473a30;
   height: 100%;
   font-family: "Roboto Mono", monospace;
+}
+
+button {
+	cursor: pointer;
+}
+
+input {
+	margin-bottom: 10px;
+	width: auto;
+}
+
+input[type="submit"] {
+	 cursor: pointer;
+ }
+
+ #settings-container > label:after {
+	content: ": "
+}
+
+#nav-bar {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
 }
 
 #app {
@@ -21,13 +45,14 @@ body {
   align-self: center;
   height: 100%;
   justify-self: center;
+	z-index: 1;
 }
 
 /* TOMATO */
 .container {
 	display: flex;
 	justify-content: center;
-	margin-top: 25em;
+	margin-top: 50%;
 }
 
 #tomato {

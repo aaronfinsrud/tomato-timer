@@ -47,7 +47,7 @@ class Settings extends React.Component {
     return (
       <div id="settings-container">
         <label htmlFor="session-length">
-          Work session length&nbsp;
+          Work session length
         </label>
         <input
           type="number"
@@ -60,7 +60,7 @@ class Settings extends React.Component {
 &nbsp;mins
         <br />
         <label htmlFor="break-length">
-          Break length&nbsp;
+          Break length
         </label>
         <input
           type="number"
@@ -74,7 +74,7 @@ class Settings extends React.Component {
         <br />
 
         <label htmlFor="reward">
-          Reward&nbsp;
+          Reward
         </label>
         <select
           id="reward"
