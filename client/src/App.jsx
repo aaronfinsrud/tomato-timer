@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDom from 'react-dom';
+import './App.css';
 import Timer from './components/Timer.jsx';
 import utils from '../../utils';
 

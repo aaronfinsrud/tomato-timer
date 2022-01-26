@@ -57,18 +57,26 @@ class Timer extends React.Component {
     const { inBreak, stopped, timeRemaining } = this.state;
     return (
       <div>
-        <div>
-          {inBreak ? 'Break Time!' : 'Work Time!'}
+        <div className="container">
+          <div id="tomato">
+            <div id="tomatoTop" />
+            <div id="tomatoFill" />
+            <div id="timer-container">
+              <div>
+                {inBreak ? 'Break Time!' : 'Work Time!'}
+              </div>
+              <div>
+                {utils.MSToMinutesAndSeconds(timeRemaining)}
+              </div>
+              <button
+                type="button"
+                onClick={this.toggleStopped}
+              >
+                {stopped ? 'Start' : 'Stop'}
+              </button>
+            </div>
+          </div>
         </div>
-        <div>
-          {utils.MSToMinutesAndSeconds(timeRemaining)}
-        </div>
-        <button
-          type="button"
-          onClick={this.toggleStopped}
-        >
-          {stopped ? 'Start' : 'Stop'}
-        </button>
       </div>
     );
   }
