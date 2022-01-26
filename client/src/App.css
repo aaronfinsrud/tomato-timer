@@ -6,10 +6,9 @@
 body {
   background-color: #1e212d;
   color: #eabf9f;
-  height: 100vh;
+  height: 100%;
   font-family: "Roboto Mono", monospace;
 }
-
 
 #app {
   display: flex;
@@ -132,3 +131,63 @@ body {
 	right: 3.25em;
 }
 
+
+/* MODAL */
+.modal-component {
+  display: block;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-component-content {
+  margin: 10% auto;
+  width: 60%;
+  box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 7px 20px 0 rgba(0, 0, 0, 0.17);
+}
+
+.modal-component-header h2,
+.modal-component-footer h3 {
+  margin: 0;
+}
+
+.modal-component-header {
+  background: var(--modal-color);
+  padding: 15px;
+  color: #fff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.modal-component-body {
+  padding: 10px 20px;
+  background: #fff;
+}
+
+.modal-component-footer {
+  background: var(--modal-color);
+  padding: 10px;
+  color: #fff;
+  text-align: center;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.close {
+  color: #ccc;
+  float: right;
+  font-size: 30px;
+  color: #fff;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
