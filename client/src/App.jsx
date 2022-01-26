@@ -63,7 +63,7 @@ class App extends React.Component {
 
   handleSettingsUpdate(updatedSessionLength, updatedBreakLength, updatedRewardType) {
     // update state & close modal
-    const { inBreak, rewardType } = this.state;
+    const { inBreak, rewardType, rewardContent } = this.state;
     const timeRemaining = inBreak ? updatedBreakLength : updatedSessionLength;
     this.setState({
       sessionLength: updatedSessionLength,
@@ -72,8 +72,10 @@ class App extends React.Component {
       rewardType: updatedRewardType,
       settingsModalIsShowing: false,
     });
-    if (rewardType !== updatedRewardType) this.updateRewardContent(updatedRewardType);
-    // TODO: send settings to database matched w/ sessionId
+    // TODO: update if condition
+    if (true || rewardType !== updatedRewardType || rewardContent.type !== updatedRewardType) {
+      this.updateRewardContent(updatedRewardType);
+    }
     const payload = {
       breakLength: updatedBreakLength,
       sessionLength: updatedSessionLength,
@@ -83,6 +85,7 @@ class App extends React.Component {
   }
 
   updateRewardContent(updatedRewardType) {
+    updatedRewardType = updatedRewardType || DEFAULT_REWARD;
     // keep random first
     if (updatedRewardType === 'random') {
       const possibleRewards = enums.rewards.length;
@@ -92,7 +95,7 @@ class App extends React.Component {
       const url = '/api/dogapi';
       axios.get(url)
         .then((response) => {
-          const rewardContent = { img: response.data.message };
+          const rewardContent = { type: updatedRewardType, img: response.data.message };
           this.setState({ rewardContent });
         });
     }
@@ -130,7 +133,8 @@ class App extends React.Component {
   }
 
   toggleRewardModal() {
-    const { rewardModalIsShowing } = this.state;
+    const { rewardModalIsShowing, inBreak } = this.state;
+    if (!inBreak) return;
     this.setState({ rewardModalIsShowing: !rewardModalIsShowing });
     this.updateRewardContent();
   }
@@ -148,7 +152,7 @@ class App extends React.Component {
     } else {
       this.toggleInBreak();
       this.toggleStopped();
-      this.setState({ rewardModalIsShowing: true });
+      this.toggleRewardModal();
     }
   }
 
