@@ -5,6 +5,7 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
+    "axios": "^0.25.0",
     "babel-loader": "^8.2.3",
     "express": "^4.17.2",
     "mongoose": "^6.1.8",
