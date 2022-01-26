@@ -49,20 +49,17 @@ class App extends React.Component {
       rewardType: updatedRewardType,
       settingsModalIsShowing: false,
     });
-    if (rewardType !== updatedRewardType) this.updateRewardContent();
+    if (rewardType !== updatedRewardType) this.updateRewardContent(updatedRewardType);
     // TODO: send settings to database matched w/ sessionId
   }
 
-  updateRewardContent() {
-    let { rewardType } = this.state;
-    if (rewardType === 'jokes') {
-      // TODO: handle jokes rewardType
-    }
-    if (rewardType === 'random') {
+  updateRewardContent(updatedRewardType) {
+    // keep random first
+    if (updatedRewardType === 'random') {
       const possibleRewards = enums.rewards.length;
-      rewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
+      updatedRewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
     }
-    if (rewardType === 'dog photos') {
+    if (updatedRewardType === 'dog photos') {
       const url = '/api/dogapi';
       axios.get(url)
         .then((response) => {
@@ -71,7 +68,7 @@ class App extends React.Component {
         });
     }
 
-    if (rewardType === 'cat photos') {
+    if (updatedRewardType === 'cat photos') {
       const url = '/api/catapi';
       axios.get(url)
         .then((response) => {
@@ -79,12 +76,21 @@ class App extends React.Component {
           this.setState({ rewardContent });
         });
     }
-    if (rewardType === 'xkcd comic') {
+    if (updatedRewardType === 'xkcd comic') {
       const comicNumber = Math.floor(Math.random() * 2572);
       const url = `/api/xkcd/${comicNumber}`;
       axios.get(url)
         .then((response) => {
           this.setState({ rewardContent: response.data });
+        });
+    }
+    if (updatedRewardType === 'programming memes') {
+      const url = '/api/programming-memes';
+      axios.get(url)
+        .then((response) => {
+          const idx = Math.floor(Math.random() * response.data.length);
+          const rewardContent = { img: response.data[idx].image };
+          this.setState({ rewardContent });
         });
     }
   }
@@ -151,7 +157,7 @@ class App extends React.Component {
         <Modal
           isShowing={rewardModalIsShowing}
           onClose={this.toggleRewardModal}
-          title="Cartoon"
+          title={rewardType}
         >
           <div style={{ display: 'flex', justifyConent: 'center' }}>
             <img

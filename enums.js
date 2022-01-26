@@ -1,3 +1,3 @@
 module.exports = {
-  rewards: ['Cat photos', 'Dog photos', 'XKCD comic', 'Jokes', 'Random'],
+  rewards: ['Cat photos', 'Dog photos', 'XKCD comic', 'Programming memes', 'Random'],
 };

@@ -22,8 +22,9 @@ app.get('/api/xkcd/:comicNumber', (req, res) => {
 });
 
 app.get('/api/catapi', (req, res) => {
+  const url = 'https://api.thecatapi.com/v1/images/search';
   const headers = { headers: { 'x-api-key': config.catAPI } };
-  axios.get('https://api.thecatapi.com/v1/images/search', headers)
+  axios.get(url, headers)
     .then((response) => {
       res.status(200).json(response.data);
     })
@@ -35,10 +36,25 @@ app.get('/api/catapi', (req, res) => {
 app.get('/api/dogapi', (req, res) => {
   axios.get('https://dog.ceo/api/breeds/image/random')
     .then((response) => {
-      console.log(response);
       res.status(200).json(response.data);
     })
     .catch((err) => {
+      console.error(err);
+    });
+});
+
+app.get('/api/programming-memes', (req, res) => {
+  const headers = {
+    headers: {
+      'x-rapidapi-host': 'programming-memes-images.p.rapidapi.com',
+      'x-rapidapi-key': config.rapidAPI,
+    },
+  };
+  const url = 'https://programming-memes-images.p.rapidapi.com/v1/memes';
+  axios.get(url, headers)
+    .then((response) => {
+      res.status(200).json(response.data);
+    }).catch((err) => {
       console.error(err);
     });
 });
