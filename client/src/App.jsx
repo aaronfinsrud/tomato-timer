@@ -6,6 +6,7 @@ import Timer from './components/Timer.jsx';
 import Modal from './components/Modal.jsx';
 import Settings from './components/Settings.jsx';
 import utils from '../../utils';
+import enums from '../../enums';
 
 const DEFAULT_MIN = Math.ceil(utils.minsToMs(0.1));
 
@@ -21,8 +22,8 @@ class App extends React.Component {
       inBreak: false,
       intervalId: 0,
       isStopped: true,
-      rewardType: 'cartoon',
-      reward: '',
+      rewardType: enums.rewards[0].toLowerCase(),
+      rewardContent: '',
     };
     this.toggleSettingsModal = this.toggleSettingsModal.bind(this);
     this.handleSettingsUpdate = this.handleSettingsUpdate.bind(this);
@@ -30,6 +31,11 @@ class App extends React.Component {
     this.updateTimeRemaining = this.updateTimeRemaining.bind(this);
     this.toggleInBreak = this.toggleInBreak.bind(this);
     this.toggleRewardModal = this.toggleRewardModal.bind(this);
+    this.updateRewardContent = this.updateRewardContent.bind(this);
+  }
+
+  componentDidMount() {
+    this.updateRewardContent();
   }
 
   handleSettingsUpdate(sessionLength, breakLength, rewardType) {
@@ -39,7 +45,20 @@ class App extends React.Component {
     this.setState({
       sessionLength, breakLength, timeRemaining, rewardType, settingsModalIsShowing: false,
     });
-    // send settings to database matched w/ sessionId
+    // TODO: send settings to database matched w/ sessionId
+  }
+
+  updateRewardContent() {
+    const { rewardType } = this.state;
+    // TODO: handle random, jokes, & cats rewardType
+    if (rewardType === 'xkcd') {
+      const comicNumber = Math.floor(Math.random() * 2572);
+      const url = `/api/xkcd/${comicNumber}`;
+      axios.get(url)
+        .then((response) => {
+          this.setState({ rewardContent: response.data });
+        });
+    }
   }
 
   toggleSettingsModal() {
@@ -50,6 +69,7 @@ class App extends React.Component {
   toggleRewardModal() {
     const { rewardModalIsShowing } = this.state;
     this.setState({ rewardModalIsShowing: !rewardModalIsShowing });
+    this.updateRewardContent();
   }
 
   toggleInBreak() {
@@ -59,21 +79,13 @@ class App extends React.Component {
   }
 
   updateTimeRemaining() {
-    const { timeRemaining, rewardType } = this.state;
+    const { timeRemaining } = this.state;
     if (timeRemaining >= 1) {
-      console.log(timeRemaining);
       this.setState({ timeRemaining: (timeRemaining - utils.secsToMS(1)) });
     } else {
       this.toggleInBreak();
       this.toggleStopped();
-
-      // TODO: show modal with joke/cartoon
-      const comicNumber = Math.floor(Math.random() * 2572);
-      const url = rewardType === 'cartoon' ? `/api/xkcd/${comicNumber}` : '';
-      axios.get(url)
-        .then((response) => {
-          this.setState({ rewardModalIsShowing: true, reward: response.data });
-        });
+      this.setState({ rewardModalIsShowing: true });
     }
   }
 
@@ -92,7 +104,7 @@ class App extends React.Component {
   render() {
     const {
       sessionLength, breakLength, settingsModalIsShowing, rewardModalIsShowing,
-      inBreak, timeRemaining, isStopped, rewardType, reward,
+      inBreak, timeRemaining, isStopped, rewardType, rewardContent,
     } = this.state;
     return (
       <div>
@@ -114,7 +126,10 @@ class App extends React.Component {
           title="Cartoon"
         >
           <div style={{ display: 'flex', justifyConent: 'center' }}>
-            <img alt={reward.alt} src={reward.img} />
+            <img
+              alt={rewardContent.alt}
+              src={rewardContent.img}
+            />
           </div>
         </Modal>
 
