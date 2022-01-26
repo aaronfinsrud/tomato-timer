@@ -21,6 +21,17 @@ app.get('/api/xkcd/:comicNumber', (req, res) => {
     });
 });
 
+app.get('/api/catapi', (req, res) => {
+  const headers = { headers: { 'x-api-key': config.catAPI } };
+  axios.get('https://api.thecatapi.com/v1/images/search', headers)
+    .then((response) => {
+      res.status(200).json(response.data);
+    })
+    .catch((err) => {
+      console.error(err);
+    });
+});
+
 app.listen(config.port, () => {
   console.log(`listening on port ${config.port}`);
 });

@@ -49,8 +49,21 @@ class App extends React.Component {
   }
 
   updateRewardContent() {
-    const { rewardType } = this.state;
+    let { rewardType } = this.state;
     // TODO: handle random, jokes, & cats rewardType
+    if (rewardType === 'random') {
+      const possibleRewards = enums.rewards.length;
+      rewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
+    }
+
+    if (rewardType === 'cat photos') {
+      const url = '/api/catapi';
+      axios.get(url)
+        .then((response) => {
+          const rewardContent = { img: response.data[0].url };
+          this.setState({ rewardContent });
+        });
+    }
     if (rewardType === 'xkcd') {
       const comicNumber = Math.floor(Math.random() * 2572);
       const url = `/api/xkcd/${comicNumber}`;
@@ -127,7 +140,7 @@ class App extends React.Component {
         >
           <div style={{ display: 'flex', justifyConent: 'center' }}>
             <img
-              alt={rewardContent.alt}
+              style={{maxWidth: '100%'}}
               src={rewardContent.img}
             />
           </div>
