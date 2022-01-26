@@ -55,7 +55,9 @@ class App extends React.Component {
 
   updateRewardContent() {
     let { rewardType } = this.state;
-    // TODO: handle jokes & dog rewardType
+    if (rewardType === 'jokes') {
+      // TODO: handle jokes rewardType
+    }
     if (rewardType === 'random') {
       const possibleRewards = enums.rewards.length;
       rewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
@@ -77,7 +79,7 @@ class App extends React.Component {
           this.setState({ rewardContent });
         });
     }
-    if (rewardType === 'xkcd') {
+    if (rewardType === 'xkcd comic') {
       const comicNumber = Math.floor(Math.random() * 2572);
       const url = `/api/xkcd/${comicNumber}`;
       axios.get(url)
