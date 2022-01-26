@@ -8,21 +8,23 @@ import Settings from './components/Settings.jsx';
 import utils from '../../utils';
 import enums from '../../enums';
 
-const DEFAULT_MIN = Math.ceil(utils.minsToMs(0.1));
+const DEFAULT_BREAK = Math.ceil(utils.minsToMs(2));
+const DEFAULT_SESSION = Math.ceil(utils.minsToMs(25));
+const DEFAULT_REWARD = enums.rewards[0].toLowerCase();
 
 class App extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      sessionLength: DEFAULT_MIN,
-      breakLength: DEFAULT_MIN,
+      sessionLength: DEFAULT_SESSION,
+      breakLength: DEFAULT_BREAK,
       settingsModalIsShowing: false,
       rewardModalIsShowing: false,
-      timeRemaining: DEFAULT_MIN,
+      timeRemaining: DEFAULT_SESSION,
       inBreak: false,
       intervalId: 0,
       isStopped: true,
-      rewardType: enums.rewards[0].toLowerCase(),
+      rewardType: DEFAULT_REWARD,
       rewardContent: '',
     };
     this.toggleSettingsModal = this.toggleSettingsModal.bind(this);
@@ -36,6 +38,19 @@ class App extends React.Component {
 
   componentDidMount() {
     this.updateRewardContent();
+    axios.get('/db/settings')
+      .then((response) => {
+        const { breakLength, sessionLength, rewardType } = response.data;
+        this.setState({
+          breakLength: breakLength || DEFAULT_BREAK,
+          sessionLength: sessionLength || DEFAULT_SESSION,
+          rewardType: rewardType || DEFAULT_REWARD,
+          timeRemaining: sessionLength || DEFAULT_SESSION,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
   }
 
   handleSettingsUpdate(updatedSessionLength, updatedBreakLength, updatedRewardType) {
@@ -51,6 +66,12 @@ class App extends React.Component {
     });
     if (rewardType !== updatedRewardType) this.updateRewardContent(updatedRewardType);
     // TODO: send settings to database matched w/ sessionId
+    const payload = {
+      breakLength: updatedBreakLength,
+      sessionLength: updatedSessionLength,
+      rewardType: updatedRewardType,
+    };
+    axios.post('/db/settings', payload);
   }
 
   updateRewardContent(updatedRewardType) {

@@ -16,13 +16,13 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 app.use(session({
   secret: config.sessionSecret,
-  resave: false,
+  // resave: false,
+  secure: false,
   saveUninitialized: true,
 }));
 
 app.get('/db/settings', (req, res) => {
   const { sessionID } = req;
-  console.log(sessionID);
   db.retrieveSettings(sessionID)
     .then((response) => {
       res.status(201).json(response);
@@ -37,7 +37,6 @@ app.post('/db/settings', (req, res) => {
   const settings = req.body;
   db.updateOrAddSettings(sessionID, settings)
     .then((response) => {
-      console.log('post response: ', response);
       res.status(201).json(response);
     })
     .catch((err) => {
