@@ -7,4 +7,9 @@ module.exports = {
     const seconds = ((millis % 60000) / 1000).toFixed(0);
     return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
   },
+  generateImage(url) {
+    const img = new Image();
+    img.src = url;
+    return img;
+  },
 };

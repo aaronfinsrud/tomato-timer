@@ -45,19 +45,28 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    this.updateRewardContent();
     axios.get('/db/settings')
       .then((response) => {
+        if (response.data === null) throw new Error('No settings saved for user.');
         const { breakLength, sessionLength, rewardType } = response.data;
         this.setState({
-          breakLength: breakLength || DEFAULT_BREAK,
-          sessionLength: sessionLength || DEFAULT_SESSION,
-          rewardType: rewardType || DEFAULT_REWARD,
-          timeRemaining: sessionLength || DEFAULT_SESSION,
+          breakLength,
+          sessionLength,
+          rewardType,
+          timeRemaining: sessionLength,
         });
       })
-      .catch((err) => {
-        console.error(err);
+      .catch(() => {
+        this.setState({
+          breakLength: DEFAULT_BREAK,
+          sessionLength: DEFAULT_SESSION,
+          rewardType: DEFAULT_REWARD,
+          timeRemaining: DEFAULT_SESSION,
+        });
+      })
+      .then(() => {
+        const { rewardType } = this.state;
+        this.updateRewardContent(rewardType);
       });
   }
 
@@ -89,13 +98,14 @@ class App extends React.Component {
     // keep random first
     if (updatedRewardType === 'random') {
       const possibleRewards = enums.rewards.length;
-      updatedRewardType = enums.rewards[Math.floor((possibleRewards - 1) * Math.random())];
+      updatedRewardType = enums.rewards[Math.floor((possibleRewards - 1)
+        * Math.random()) + 1].toLowerCase();
     }
     if (updatedRewardType === 'dog photos') {
       const url = '/api/dogapi';
       axios.get(url)
         .then((response) => {
-          const rewardContent = { type: updatedRewardType, img: response.data.message };
+          const rewardContent = utils.generateImage(response.data.message);
           this.setState({ rewardContent });
         });
     }
@@ -104,7 +114,7 @@ class App extends React.Component {
       const url = '/api/catapi';
       axios.get(url)
         .then((response) => {
-          const rewardContent = { img: response.data[0].url };
+          const rewardContent = utils.generateImage(response.data[0].url);
           this.setState({ rewardContent });
         });
     }
@@ -113,7 +123,8 @@ class App extends React.Component {
       const url = `/api/xkcd/${comicNumber}`;
       axios.get(url)
         .then((response) => {
-          this.setState({ rewardContent: response.data });
+          const rewardContent = utils.generateImage(response.data);
+          this.setState({ rewardContent });
         });
     }
     if (updatedRewardType === 'programming memes') {
@@ -121,7 +132,7 @@ class App extends React.Component {
       axios.get(url)
         .then((response) => {
           const idx = Math.floor(Math.random() * response.data.length);
-          const rewardContent = { img: response.data[idx].image };
+          const rewardContent = utils.generateImage(response.data[idx].image);
           this.setState({ rewardContent });
         });
     }
@@ -136,7 +147,7 @@ class App extends React.Component {
     const { rewardModalIsShowing, inBreak } = this.state;
     if (!inBreak) return;
     this.setState({ rewardModalIsShowing: !rewardModalIsShowing });
-    this.updateRewardContent();
+    if (rewardModalIsShowing) this.updateRewardContent();
   }
 
   toggleInBreak() {
@@ -198,7 +209,7 @@ class App extends React.Component {
           <div style={{ display: 'flex', justifyConent: 'center' }}>
             <img
               style={{ maxWidth: '100%' }}
-              src={rewardContent.img}
+              src={rewardContent.src}
               alt=""
             />
           </div>
