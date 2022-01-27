@@ -20,6 +20,13 @@ function SETTINGS_ICON() {
   );
 }
 
+/*
+TODO:
+1. sound at time elapsed
+2. Carousel of tomatoes (green break, red work)
+3. Show time in tab title
+*/
+
 class App extends React.Component {
   constructor(props) {
     super(props);
