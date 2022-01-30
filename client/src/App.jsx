@@ -24,7 +24,7 @@ function SETTINGS_ICON() {
 TODO:
 1. sound at time elapsed
 2. Carousel of tomatoes (green break, red work)
-3. Show time in tab title
+3. Improve scale on mobile devices
 */
 
 class App extends React.Component {
@@ -165,6 +165,7 @@ class App extends React.Component {
 
   updateTimeRemaining() {
     const { timeRemaining } = this.state;
+    document.title = utils.MSToMinutesAndSeconds(timeRemaining);
     if (timeRemaining >= 1) {
       this.setState({ timeRemaining: (timeRemaining - utils.secsToMS(1)) });
     } else {
