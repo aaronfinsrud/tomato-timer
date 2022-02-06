@@ -1,5 +1,5 @@
 :root {
-	--modal-color: #5f6270d0;
+	--modal-color: #5f6270f8;
 }
 
 body {
@@ -115,15 +115,14 @@ input[type="submit"] {
 }
 
 .close {
-  color: #ccc;
+  color: rgb(19, 19, 19);
   float: right;
   font-size: 30px;
-  color: #fff;
 }
 
 .close:hover,
 .close:focus {
-  color: #000;
+  color: rgba(0, 0, 0, 0.315);
   text-decoration: none;
   cursor: pointer;
 }
