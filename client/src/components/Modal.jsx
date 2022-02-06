@@ -10,7 +10,12 @@ const Modal = function ({
     <div className="modal-component">
       <div className="modal-component-content">
         <div className="modal-component-header">
-          <button type="button" onClick={onClose} className="close">&times;</button>
+          <button
+            name="close-modal"
+            type="button"
+            onClick={onClose}
+            className="close">&times;
+          </button>
           <h2>{title}</h2>
         </div>
         <div className="modal-component-body">

@@ -188,7 +188,11 @@ class App extends React.Component {
       <div id="app-container">
         <div id="nav-bar">
           <h1>Tomato clock</h1>
-          <button disabled={!isStopped} type="button" onClick={this.toggleSettingsModal}>
+          <button
+            name="settings"
+            disabled={!isStopped}
+            type="button"
+            onClick={this.toggleSettingsModal}>
             {SVGs.settings()}
           </button>
         </div>

@@ -17,6 +17,7 @@ function Timer({
           {utils.MSToMinutesAndSeconds(timeRemaining)}
         </div>
         <button
+          name="toggle-timer"
           type="button"
           onClick={toggleStopped}
         >

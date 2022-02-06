@@ -7,7 +7,8 @@ const DIST_DIR = path.join(__dirname, '/client/dist');
 module.exports = {
   entry: `${SRC_DIR}/App.jsx`,
   output: {
-    filename: 'bundle.js',
+    filename: '[name].js',
+    sourceMapFilename: '[name].js.map',
     path: DIST_DIR,
   },
   plugins: [
