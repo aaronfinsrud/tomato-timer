@@ -1,13 +1,12 @@
 :root {
-  --tomato: rgba(255, 0, 0, 0.514)0000;
-  --leaves: rgb(0, 128, 0);
 	--modal-color: #5f6270d0;
 }
 
 body {
   background-color: #1e212d48;
   color: #473a30;
-  height: 100%;
+  height: 95vh;
+	width: 95vw;
   font-family: "Roboto Mono", monospace;
 }
 
@@ -32,130 +31,38 @@ input[type="submit"] {
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
+	height: 10%;
 }
 
 #app {
   display: flex;
-  height: 100%;
   justify-content: center;
+	height: 100%;
+}
+
+#app-container {
+	flex-direction: column;
+	height: 100%;
 }
 
 #timer-container {
-  margin-top: -3em;
-  align-self: center;
-  height: 100%;
-  justify-self: center;
-	z-index: 1;
-}
-
-/* TOMATO */
-.container {
-	display: flex;
-	justify-content: center;
-	margin-top: 50%;
-}
-
-#tomato {
-	background: var(--tomato);
-	height: 12.5em;
-	width:25em;
-	border-radius:0 0 12.5em 12.5em;
-	position:relative;
-  display: flex;
-}
-
-#tomato::before{
-	content:"";
-	width:8em;
-	height:8em;
-	border: 0.25em solid var(--tomato);
-	background: var(--tomato);
-	position:absolute;
-	border-radius:0 8em 0 0;
-	top:-8em;
-	right:0;
-}
-
-#tomato::after {
-	content: "";
-	width:8em;
-	height:8em;
-	border: 0.25em solid var(--tomato);
-	background: var(--tomato);
-	position:absolute;
-	border-radius:8em 0 0 0;
-	top:-8em;
-}
-
-#tomatoFill {
-	width:9em;
-	height:4em;
-	background: var(--tomato);
-	position:absolute;
-	top:-4em;
-	left:8em;
-	transition: all .2s ease-in-out;
-}
-
-#tomatoFill::before {
-	content: "";
-	width:4.5em;
-	height:4em;
-	background: var(--tomato);
-	position:absolute;
-	border-radius:0 4em 0 0;
-	top:-4em;
-	transition: all .2s ease-in-out;
-}
-
-#tomatoFill::after {
-	content: "";
-	width:4.5em;
-	height:4em;
-	background: var(--tomato);
-	position: absolute;
-	border-radius: 4em 0 0 0;
-	top:-4em;
-	right:0;
-}
-
-#tomatoTop {
-	background: var(--leaves);
-	height:4em;
-	width:4em;
-	border-radius:4em 0 4em 0;
+	height: 90%;
 	position: relative;
-	transform: rotateZ(135deg);
-	top:-4em;
-	z-index:1;
-  left: 10.5em;
+	min-height: 275px;;
+
 }
 
-#tomatoTop::before {
-	content: "";
-	background: var(--leaves);
-	height:4em;
-	width:4em;
-	border-radius:4em 0 4em 0;
+#timer-interface-container {
 	position: absolute;
-	z-index:1;
-	transform: rotateZ(90deg);
-	top: 3em;
+	top: 50%;
+	left: 50%;
 }
 
-#tomatoTop::after {
-	content: "";
-	background: var(--leaves);
-	height:4em;
-	width:4em;
-	border-radius:4em 0 4em 0;
-	position: absolute;
-	z-index:1;
-	transform: rotateZ(90deg);
-	top: -0.5em;
-	right: 3.25em;
+#tomato-svg {
+	width: 100%;
+	z-index: -1;
+	filter: drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));
 }
-
 
 /* MODAL */
 .modal-component {

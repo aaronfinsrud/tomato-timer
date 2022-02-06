@@ -1,31 +1,27 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import utils from '../../../utils';
+import SVGs from '../assets/SVGs.jsx';
 
 function Timer({
   inBreak, isStopped, timeRemaining, toggleStopped,
 }) {
   return (
-    <div>
-      <div className="container">
-        <div id="tomato">
-          <div id="tomatoTop" />
-          <div id="tomatoFill" />
-          <div id="timer-container">
-            <div>
-              {inBreak ? 'Break Time!' : 'Work Time!'}
-            </div>
-            <div>
-              {utils.MSToMinutesAndSeconds(timeRemaining)}
-            </div>
-            <button
-              type="button"
-              onClick={toggleStopped}
-            >
-              {isStopped ? 'Start' : 'Stop'}
-            </button>
-          </div>
+    <div id="timer-container">
+      {SVGs.tomato()}
+      <div id="timer-interface-container">
+        <div>
+          {inBreak ? 'Break Time!' : 'Work Time!'}
         </div>
+        <div>
+          {utils.MSToMinutesAndSeconds(timeRemaining)}
+        </div>
+        <button
+          type="button"
+          onClick={toggleStopped}
+        >
+          {isStopped ? 'Start' : 'Stop'}
+        </button>
       </div>
     </div>
   );
