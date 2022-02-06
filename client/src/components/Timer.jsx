@@ -11,7 +11,7 @@ function Timer({
       {SVGs.tomato()}
       <div id="timer-interface-container">
         <div>
-          {inBreak ? 'Break Time!' : 'Work Time!'}
+          {inBreak ? 'Break Time' : 'Work Time'}
         </div>
         <div>
           {utils.MSToMinutesAndSeconds(timeRemaining)}
