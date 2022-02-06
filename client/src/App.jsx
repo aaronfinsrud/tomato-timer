@@ -189,6 +189,7 @@ class App extends React.Component {
         <div id="nav-bar">
           <h1>Tomato clock</h1>
           <button
+            style={{ minHeight: '30px' }}
             name="settings"
             disabled={!isStopped}
             type="button"
@@ -208,7 +209,7 @@ class App extends React.Component {
         <Modal
           isShowing={rewardModalIsShowing}
           onClose={this.toggleRewardModal}
-          title={rewardType}
+          title={'🎉 A reward for your hard work 🎉'}
         >
           <div style={{ display: 'flex', justifyConent: 'center' }}>
             <img
